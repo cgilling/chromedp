@@ -146,11 +146,16 @@ func (a *ExecAllocator) Allocate(ctx context.Context, opts ...BrowserOption) (*B
 		dataDir = tempDir
 		removeDir = true
 	}
-	if _, ok := a.initFlags["no-sandbox"]; !ok && os.Getuid() == 0 {
+	if true /*_, ok := a.initFlags["no-sandbox"]; !ok && os.Getuid() == 0 */ {
 		// Running as root, for example in a Linux container. Chrome
 		// needs --no-sandbox when running as root, so make that the
 		// default, unless the user set Flag("no-sandbox", false).
 		args = append(args, "--no-sandbox")
+		args = append(args, "--disable-gpu")
+		args = append(args, "--homedir=/tmp")
+		args = append(args, "--single-process")
+		args = append(args, "--data-path=/tmp/data-path")
+		args = append(args, "--disk-cache-dir=/tmp/cache-dir")
 	}
 	if _, ok := a.initFlags["remote-debugging-port"]; !ok {
 		args = append(args, "--remote-debugging-port=0")
